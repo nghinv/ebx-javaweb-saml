@@ -23,6 +23,7 @@ import org.opensaml.xml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.saml.key.KeyManager;
 import org.springframework.security.saml.metadata.*;
 import org.springframework.security.saml.util.SAMLUtil;
@@ -53,6 +54,9 @@ public class MetadataController {
         SSO_POST, SSO_PAOS, SSO_ARTIFACT, HOKSSO_POST, HOKSSO_ARTIFACT
     }
 
+    @Value("${saml.redirectAfterSuccessfulLogin.url}")
+    private String redirectAfterSuccessfulLogin;
+
     @Autowired
     MetadataManager metadataManager;
 
@@ -69,6 +73,15 @@ public class MetadataController {
         model.addObject("idpList", metadataManager.getIDPEntityNames());
         model.addObject("metadata", metadataManager.getAvailableProviders());
 
+        return model;
+
+    }
+
+    // /saml/saml/web/metadata/ok
+    @RequestMapping(value = "/ok")
+    public ModelAndView ok() {
+
+        ModelAndView model = new ModelAndView(new InternalResourceView("/hello.jsp", true));
         return model;
 
     }

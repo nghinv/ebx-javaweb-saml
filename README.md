@@ -12,7 +12,7 @@ mvn clean install
 
 ## distribution
 
-cp target/saml-0.0.3-SNAPSHOT.war ../tomcat-saml/saml.war && cp target/saml-0.0.3-SNAPSHOT.war ../tomcat-saml-ebx/saml.war
+cp target/saml-0.0.4-SNAPSHOT.war ../tomcat-saml/saml.war && cp target/saml-0.0.4-SNAPSHOT.war ../tomcat-saml-ebx/saml.war
 
 ## References
 

@@ -34,7 +34,6 @@
 		<!-- http://localhost:8080/saml/saml/web/metadata/display?entityId=urn%3atest%3amickaelg%3aEBX_SAML -->
 
 		<!-- Metadata is also available in the sample application's administration UI under Metadata information -> selected SP. -->
-
 	</security:http>
 
 	<!-- Secured pages with SAML as entry point -->
@@ -43,6 +42,8 @@
 		<security:custom-filter before="FIRST" ref="metadataGeneratorFilter" />
 		<security:custom-filter after="BASIC_AUTH_FILTER" ref="samlFilter" />
 	</security:http>
+
+	<bean id="hellocontrlr" class="org.springframework.security.saml.web.HelloController" />
 
 	<!-- Filters for processing of SAML messages -->
 	<bean id="samlFilter" class="org.springframework.security.web.FilterChainProxy">
@@ -129,7 +130,7 @@
 		<property name="idpSelectionPath" value="/WEB-INF/security/idpSelection.jsp" />
 	</bean>
 
-	<context:property-placeholder location="file:${saml.home}/samlconf.properties" ignore-unresolvable="true" />
+	<context:property-placeholder location="file:${saml.home}/samlconf.properties" />
 	<!-- <context:property-placeholder location="classpath:foo.properties" ignore-unresolvable="true" /> -->
 	<!-- <bean id="mickConf" class="com.on.ps.security.saml.MickConf" init-method="init" /> -->
 
@@ -334,7 +335,7 @@
 		<property name="signatureAlgorithmURI" value="${saml.signatureAlgorithmURI}" />
 		<property name="signatureReferenceDigestMethod" value="${saml.signatureReferenceDigestMethod}" />
 	</bean>
-	
+
 	<bean id="myMappingEbxSamlCredentials" class="com.on.ps.security.saml.MappingEbxSamlCredentials">
 		<property name="userID" value="${saml.mappingebxsamlcredentials.userID}" />
 		<property name="emailAddress" value="${saml.mappingebxsamlcredentials.emailAddress}" />
