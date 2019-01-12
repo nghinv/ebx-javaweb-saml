@@ -5,9 +5,12 @@
 
 	<groupId>com.on.ps.security</groupId>
 	<artifactId>saml</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<description>0.0.4 fix redirection not always going to ebx</description>
+	<description>
+		0.0.5 gather more data from saml authentication
+		0.0.4 fix redirection not always going to ebx
+	</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

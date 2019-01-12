@@ -18,7 +18,7 @@
 <%
 	final WebApplicationContext webApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
 	final MappingEbxSamlCredentials mapping = (MappingEbxSamlCredentials) webApplicationContext.getBean("myMappingEbxSamlCredentials");
-	
+
 	final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	final SAMLCredential credential = (SAMLCredential) authentication.getCredentials();
 	pageContext.setAttribute("authentication", authentication);
@@ -34,6 +34,10 @@
 	final Map<String, Object> data = (Map<String, Object>)session.getServletContext().getAttribute("data");
 	if(authentication!=null && authentication.getPrincipal()!=null){
 		final Map<String, Object> values = new HashMap<String, Object>();
+
+		values.put("AuthenticationName", authentication.getName());
+		values.put("AuthenticationPrincipal", authentication.getPrincipal().toString());
+		values.put("CredentialNameIdValue", credential.getNameID().getValue());
 
 		values.put("UserID", credential.getAttributeAsString(mapping.getUserID()));
 		values.put("EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));

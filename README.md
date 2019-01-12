@@ -12,7 +12,7 @@ mvn clean install
 
 ## distribution
 
-cp target/saml-0.0.4-SNAPSHOT.war ../tomcat-saml/saml.war && cp target/saml-0.0.4-SNAPSHOT.war ../tomcat-saml-ebx/saml.war
+cp target/saml-0.0.5-SNAPSHOT.war ../tomcat-saml/saml.war && cp target/saml-0.0.5-SNAPSHOT.war ../tomcat-saml-ebx/saml.war
 
 ## References
 
@@ -46,3 +46,15 @@ http://www.w3.org/2001/04/xmlenc#sha256
 http://www.w3.org/2001/04/xmldsig-more#sha384
 http://www.w3.org/2001/04/xmlenc#sha512
 ```
+
+## samlconf
+
+AuthenticationName
+
+sending to EBX
+- FirstName
+- LastName
+- EmailAddress
+- AuthenticationName
+- AuthenticationPrincipal
+- CredentialNameIdValue
