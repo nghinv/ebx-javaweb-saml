@@ -1,3 +1,7 @@
+<%@page import="com.orchestranetworks.ps.customDirectory.directory.sso.SSOUserAuthenticatedBean"%>
+<%@page import="com.orchestranetworks.ps.customDirectory.YourDirectory"%>
+<%@page import="java.util.stream.Collectors"%>
+<%@page import="java.util.Collections"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.springframework.web.servlet.support.RequestContextUtils"%>
@@ -25,29 +29,18 @@
 	pageContext.setAttribute("credential", credential);
 	pageContext.setAttribute("assertion", XMLHelper.nodeToString(SAMLUtil.marshallMessage(credential.getAuthenticationAssertion())));
 
-	if(session.getServletContext().getAttribute("data")==null){
-		session.getServletContext().setAttribute("data", new HashMap<String, Object>());
-	}
-
 	System.out.println("SESSIONID="+session.getId());
 
-	final Map<String, Object> data = (Map<String, Object>)session.getServletContext().getAttribute("data");
-	if(authentication!=null && authentication.getPrincipal()!=null){
-		final Map<String, Object> values = new HashMap<String, Object>();
-
-		values.put("AuthenticationName", authentication.getName());
-		values.put("AuthenticationPrincipal", authentication.getPrincipal().toString());
-		values.put("CredentialNameIdValue", credential.getNameID().getValue());
-
-		values.put("UserID", credential.getAttributeAsString(mapping.getUserID()));
-		values.put("EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));
-		values.put("FirstName", credential.getAttributeAsString(mapping.getFirstName()));
-		values.put("LastName", credential.getAttributeAsString(mapping.getLastName()));
-
-		data.put(session.getId(), values);
-	}else{
-		data.put(session.getId(), null);
-	}
+	final Map<String, Object> values = new HashMap<String, Object>();
+	values.put("SAML_AuthenticationName", authentication.getName());
+	values.put("SAML_AuthenticationPrincipal", authentication.getPrincipal().toString());
+	values.put("SAML_NameId", credential.getNameID().getValue());
+	values.put("SAML_UserID", credential.getAttributeAsString(mapping.getUserID()));
+	values.put("SAML_EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));
+	values.put("SAML_FirstName", credential.getAttributeAsString(mapping.getFirstName()));
+	values.put("SAML_LastName", credential.getAttributeAsString(mapping.getLastName()));
+	
+	YourDirectory.setSSOAuthenticationData(session.getId(), new SSOUserAuthenticatedBean(values));
 
 	response.sendRedirect("/ebx");
 %>

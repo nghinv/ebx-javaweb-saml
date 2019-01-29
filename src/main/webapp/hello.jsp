@@ -1,3 +1,7 @@
+<%@page import="com.orchestranetworks.ps.customDirectory.directory.sso.SSOUserAuthenticatedBean"%>
+<%@page import="com.orchestranetworks.ps.customDirectory.YourDirectory"%>
+<%@page import="java.util.stream.Collectors"%>
+<%@page import="java.util.Collections"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.springframework.security.saml.util.SAMLUtil"%>
@@ -13,38 +17,31 @@
 <%
 	final WebApplicationContext webApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
 	final String label_str = ((HelloController)webApplicationContext.getBean("hellocontrlr")).getRedirectAfterSuccessfulLogin();
-	
+
 	if(label_str.equals("/index_ebx.jsp")){
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final SAMLCredential credential = (SAMLCredential) authentication.getCredentials();
 		final MappingEbxSamlCredentials mapping = (MappingEbxSamlCredentials) webApplicationContext.getBean("myMappingEbxSamlCredentials");
-		
+
 		pageContext.setAttribute("authentication", authentication);
 		pageContext.setAttribute("credential", credential);
 		pageContext.setAttribute("assertion", XMLHelper.nodeToString(SAMLUtil.marshallMessage(credential.getAuthenticationAssertion())));
 
-		if(session.getServletContext().getAttribute("data")==null){
-			session.getServletContext().setAttribute("data", new HashMap<String, Object>());
-		}
-
 		System.out.println("SESSIONID="+session.getId());
+
+		final Map<String, Object> values = new HashMap<String, Object>();
+		values.put("SAML_AuthenticationName", authentication.getName());
+		values.put("SAML_AuthenticationPrincipal", authentication.getPrincipal().toString());
+		values.put("SAML_CredentialNameIdValue", credential.getNameID().getValue());
+		values.put("SAML_UserID", credential.getAttributeAsString(mapping.getUserID()));
+		values.put("SAML_EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));
+		values.put("SAML_FirstName", credential.getAttributeAsString(mapping.getFirstName()));
+		values.put("SAML_LastName", credential.getAttributeAsString(mapping.getLastName()));
 		
-		final Map<String, Object> data = (Map<String, Object>)session.getServletContext().getAttribute("data");
-		if(authentication!=null && authentication.getPrincipal()!=null){
-			final Map<String, Object> values = new HashMap<String, Object>();
-
-			values.put("UserID", credential.getAttributeAsString(mapping.getUserID()));
-			values.put("EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));
-			values.put("FirstName", credential.getAttributeAsString(mapping.getFirstName()));
-			values.put("LastName", credential.getAttributeAsString(mapping.getLastName()));
-
-			data.put(session.getId(), values);
-		}else{
-			data.put(session.getId(), null);
-		}
+		YourDirectory.setSSOAuthenticationData(session.getId(), new SSOUserAuthenticatedBean(values));
 
 		response.sendRedirect("/ebx");
-		
+
 	} else if(label_str.equals("/")){
 		response.sendRedirect("/saml/index.jsp");
 	} else {
