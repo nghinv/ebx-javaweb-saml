@@ -14,6 +14,18 @@
  */
 package org.springframework.security.saml.web;
 
+import static org.springframework.util.StringUtils.hasLength;
+
+import java.security.KeyStoreException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
@@ -23,9 +35,12 @@ import org.opensaml.xml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.saml.key.KeyManager;
-import org.springframework.security.saml.metadata.*;
+import org.springframework.security.saml.metadata.ExtendedMetadata;
+import org.springframework.security.saml.metadata.ExtendedMetadataDelegate;
+import org.springframework.security.saml.metadata.MetadataGenerator;
+import org.springframework.security.saml.metadata.MetadataManager;
+import org.springframework.security.saml.metadata.MetadataMemoryProvider;
 import org.springframework.security.saml.util.SAMLUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -34,12 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.InternalResourceView;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.KeyStoreException;
-import java.util.*;
-
-import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * Class allows manipulation of metadata from web UI.
@@ -53,9 +62,6 @@ public class MetadataController {
     public static enum AllowedSSOBindings {
         SSO_POST, SSO_PAOS, SSO_ARTIFACT, HOKSSO_POST, HOKSSO_ARTIFACT
     }
-
-    @Value("${saml.redirectAfterSuccessfulLogin.url}")
-    private String redirectAfterSuccessfulLogin;
 
     @Autowired
     MetadataManager metadataManager;
@@ -73,15 +79,6 @@ public class MetadataController {
         model.addObject("idpList", metadataManager.getIDPEntityNames());
         model.addObject("metadata", metadataManager.getAvailableProviders());
 
-        return model;
-
-    }
-
-    // /saml/saml/web/metadata/ok
-    @RequestMapping(value = "/ok")
-    public ModelAndView ok() {
-
-        ModelAndView model = new ModelAndView(new InternalResourceView("/hello.jsp", true));
         return model;
 
     }

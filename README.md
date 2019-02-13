@@ -1,14 +1,60 @@
 # ebx-javaweb-saml
 
-## requirement
+## requirements
+
+### requirement 1
 
 download and setup https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html
 
 unzip and read the readme.txt
 
+### requirement 2
+
+add folder 'libSaml/deps/*.jar' to Tomcat common.loader
+
+### requirement 3
+
+add tomcat-oidcauth-2.2.3-Tomcat9.0.jar to Tomcat/lib, see bitbucket.org:mickaelgermemont/tomcat-oidcauth
+
+add tomcat-realm-ebx-1.0.0-SNAPSHOT.jar to Tomcat/lib, see bitbucket.org:mickaelgermemont/tomcat-realm-ebx
+
+in server.xml, configure the EBX Ream
+
+if you use OpenIDConnect and Azure AD (OAuth), in server.xml or separate context, add valve OpenIDConnectAuthenticator to the oidc webapp (to know the providers parameter value, see documentation https://github.com/boylesoftware/tomcat8-oidcauth)
+
+if you use SAML, in server.xml or separate context, add valve SamlAuthenticator to the saml webapp
+
+```
+<Engine defaultHost="localhost" name="Catalina">
+	<Realm className="org.apache.catalina.realm.LockOutRealm">
+		<Realm className="com.tibco.ps.ebx.catalina.realm.EBXRealm" createIfNotExist="true"/>
+	</Realm>
+	<Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">
+		<Valve className="org.apache.catalina.authenticator.SingleSignOn"/>
+		
+		<Context docBase="tomcat8-oidcauth-sample" path="/oidc">
+			<Valve additionalScopes="email profile" className="org.bsworks.catalina.authenticator.oidc.tomcat90.OpenIDConnectAuthenticator" providers="....." usernameClaim="email"/>
+		</Context>
+	
+		<Context docBase="saml" path="/saml">
+			<Valve className="org.bsworks.catalina.authenticator.oidc.tomcat90.SamlAuthenticator"/>
+		</Context>
+	</Host>
+</Engine>
+```
+
 ## build
 
 mvn clean install
+
+## configuration
+
+configure Tomcat startup and include the following parameter
+
+-Dsaml.conf.location=file:/Users/mickaelgermemont/src/github.com/mickaelgermemont/java-saml/samlconf.properties
+-Dsaml.conf.location=classpath:samlconf.properties
+
+<Connector SSLEnabled="true" clientAuth="false" keystoreFile="${keystore.location}" keystorePass="ebx tomcat password" maxThreads="150" port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol" scheme="https" secure="true" sslProtocol="TLS"/>
 
 ## distribution
 

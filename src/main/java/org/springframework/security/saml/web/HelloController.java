@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelloController {
 
-    @Value("${saml.redirectAfterSuccessfulLogin.url}")
+    @Value("${saml.redirectAfterSuccessfulLogin}")
     private String redirectAfterSuccessfulLogin;
 
     public String getRedirectAfterSuccessfulLogin() {

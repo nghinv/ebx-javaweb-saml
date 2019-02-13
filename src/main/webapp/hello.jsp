@@ -18,8 +18,8 @@
 	final WebApplicationContext webApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
 	final String label_str = ((HelloController)webApplicationContext.getBean("hellocontrlr")).getRedirectAfterSuccessfulLogin();
 
-	if(label_str.equals("/index_ebx.jsp")){
-		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	if(label_str!=null && label_str.trim().equalsIgnoreCase("true")){
+		/* final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final SAMLCredential credential = (SAMLCredential) authentication.getCredentials();
 		final MappingEbxSamlCredentials mapping = (MappingEbxSamlCredentials) webApplicationContext.getBean("myMappingEbxSamlCredentials");
 
@@ -27,8 +27,8 @@
 		pageContext.setAttribute("credential", credential);
 		pageContext.setAttribute("assertion", XMLHelper.nodeToString(SAMLUtil.marshallMessage(credential.getAuthenticationAssertion())));
 
-		System.out.println("SESSIONID="+session.getId());
-
+		// upsert EBX user if required
+		// 
 		final Map<String, Object> values = new HashMap<String, Object>();
 		values.put("SAML_AuthenticationName", authentication.getName());
 		values.put("SAML_AuthenticationPrincipal", authentication.getPrincipal().toString());
@@ -36,15 +36,11 @@
 		values.put("SAML_UserID", credential.getAttributeAsString(mapping.getUserID()));
 		values.put("SAML_EmailAddress", credential.getAttributeAsString(mapping.getEmailAddress()));
 		values.put("SAML_FirstName", credential.getAttributeAsString(mapping.getFirstName()));
-		values.put("SAML_LastName", credential.getAttributeAsString(mapping.getLastName()));
+		values.put("SAML_LastName", credential.getAttributeAsString(mapping.getLastName())); */
 		
-		YourDirectory.setSSOAuthenticationData(session.getId(), new SSOUserAuthenticatedBean(values));
+		response.sendRedirect("/saml/secure/ebx");
 
-		response.sendRedirect("/ebx");
-
-	} else if(label_str.equals("/")){
-		response.sendRedirect("/saml/index.jsp");
 	} else {
-		response.sendRedirect("/saml/"+label_str);
+		response.sendRedirect("/saml/index.jsp");
 	}
 %>

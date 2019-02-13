@@ -16,13 +16,13 @@
 	<security:http security="none" pattern="/images/**" />
 	<security:http security="none" pattern="/css/**" />
 	<security:http security="none" pattern="/logout.jsp" />
-
+	
 	<!-- Security for the administration UI -->
 	<security:http pattern="/saml/web/**" use-expressions="false">
 		<security:access-denied-handler error-page="/saml/web/metadata/login" />
 		<security:form-login login-processing-url="/saml/web/login" login-page="/saml/web/metadata/login" default-target-url="/saml/web/metadata" />
 		<security:intercept-url pattern="/saml/web/metadata/login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
+		
 		<!-- <security:intercept-url pattern="/saml/web/**" access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
 		<security:intercept-url pattern="/saml/web/metadata/**" access="ROLE_ADMIN" />
 
@@ -130,7 +130,7 @@
 		<property name="idpSelectionPath" value="/WEB-INF/security/idpSelection.jsp" />
 	</bean>
 
-	<context:property-placeholder location="file:${saml.home}/samlconf.properties" />
+	<context:property-placeholder location="${saml.conf.location}" />
 	<!-- <context:property-placeholder location="classpath:foo.properties" ignore-unresolvable="true" /> -->
 	<!-- <bean id="mickConf" class="com.on.ps.security.saml.MickConf" init-method="init" /> -->
 

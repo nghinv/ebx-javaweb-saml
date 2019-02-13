@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
- -->
 <!-- <web-app xmlns="http://java.sun.com/xml/ns/javaee"
 	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	     http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	     version="3.0"> -->
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+<!-- <web-app xmlns="http://java.sun.com/xml/ns/javaee"
 	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	     http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	     version="2.5">
+	     version="2.5"> -->
 
     <display-name>Spring Security SAML</display-name>
     <description>Sample application demonstrating Spring security SAML integration.</description>
 
-    <context-param>
+	<context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/securityContext.xml</param-value>
     </context-param>
@@ -29,7 +28,6 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>saml</servlet-name>
         <url-pattern>/saml/web/*</url-pattern>
@@ -47,6 +45,18 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <servlet>
+		<servlet-name>SecurePage</servlet-name>
+		<jsp-file>/WEB-INF/jsps/secure-page.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SecurePage</servlet-name>
+		<url-pattern>/secure/ebx</url-pattern>
+	</servlet-mapping>
+
+
+
 
     <welcome-file-list>
         <welcome-file>hello.jsp</welcome-file>
@@ -56,4 +66,34 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/error.jsp</location>
     </error-page>
+
+
+
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Secure Pages</web-resource-name>
+			<url-pattern>/secure/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>Test Application</realm-name>
+		<form-login-config>
+			<form-login-page>/WEB-INF/jsps/login.jsp</form-login-page>
+			<form-error-page>/WEB-INF/jsps/error.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	
+	<security-role>
+		<role-name>EBX</role-name>
+	</security-role>
+	
 </web-app>
